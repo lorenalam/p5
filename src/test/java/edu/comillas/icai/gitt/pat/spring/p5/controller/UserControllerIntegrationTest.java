@@ -14,6 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @WebMvcTest(UserController.class)
 class UserControllerIntegrationTest {
@@ -40,7 +43,7 @@ class UserControllerIntegrationTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(request))
             // Then ...
-            .andExpect(MockMvcResultMatchers.status().isCreated())
+            .andExpect(status().isCreated())
             .andExpect(MockMvcResultMatchers.content().string("{" +
                     "\"name\":\"" + NAME + "\"," +
                     "\"email\":\"" + EMAIL + "\"," +
@@ -54,11 +57,20 @@ class UserControllerIntegrationTest {
      * (no cumple condiciones)
      */
     @Test void registerInvalidPassword() throws Exception {
-        // Given ...
-
-        // When ...
-
-                // Then ...
-
+        // Given
+        Mockito.when(userService.profile(Mockito.any(RegisterRequest.class)))
+                .thenReturn(new ProfileResponse(NAME, EMAIL, Role.USER));
+        String request = "{" +
+                "\"name\":\"" + NAME + "\"," +
+                "\"email\":\"" + EMAIL + "\"," +
+                "\"role\":\"" + Role.USER + "\"," +
+                "\"password\":\"aeiou\"}";
+        // When
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                // Then
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

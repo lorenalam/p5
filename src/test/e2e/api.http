@@ -4,24 +4,35 @@
 
 ### Create user
 
-POST http://localhost:8080/...
+POST http://localhost:8080/api/users
 Content-Type: application/json
 
 {
-  ...
+  "name": "Lorena",
+  "email": "lorena@comillas.com",
+  "role": "USER",
+  "password": "Password17"
 }
+
 
 ### Login
 
-... http://localhost:8080/...
+POST http://localhost:8080/api/users/me/session
 Content-Type: application/json
 
 {
-  ...
+  "email": "lorena@comillas.com",
+  "password": "Password17"
 }
 
-### Profile
 
-... http://localhost:8080/...
-Cookie: session=...
+### Login
+
+POST http://localhost:8080/api/users/me/session
+Content-Type: application/json
+
+{
+  "email": "lorena@comillas.com",
+  "password": "Password17"
+}
 

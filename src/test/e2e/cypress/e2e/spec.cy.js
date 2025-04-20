@@ -22,7 +22,19 @@ describe('Registro y login', () => {
   // Implementa el siguiente test E2E del frontend web para
   // verificar que se realiza el login correctamente con el usuario
   // previamente registrado
-  it('Login correcto', () => {
 
-  })
+it('Login correcto', () => {
+  // Given: usuario previamente registrado
+  cy.visit('/login.html')
+
+  // When: introduce credenciales válidas
+  cy.get('input[name=email]').type('lorena@example.com')
+  cy.get('input[name=password]').type('secure123')
+  cy.contains('Entrar').click()
+
+  // Then: debe redirigir a profile y mostrar el nombre
+  cy.url().should('include', '/profile.html')
+  cy.contains('Lorena')
+})
+
 })

@@ -1,5 +1,6 @@
 package edu.comillas.icai.gitt.pat.spring.p5;
 
+import edu.comillas.icai.gitt.pat.spring.p5.model.RegisterRequest;
 import edu.comillas.icai.gitt.pat.spring.p5.model.Role;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -56,13 +57,41 @@ class P5ApplicationE2ETest {
      * Completa el siguiente test E2E para que verifique la
      * respuesta de login cuando se proporcionan credenciales correctas
      */
-    @Test public void loginOkTest() {
-        // Given ...
+    @Test
+    public void loginOkTest() {
+        // Given: cabeceras y cuerpo JSON de registro y login
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // When ...
+        String registro = "{" +
+                "\"name\":\"" + NAME + "\"," +
+                "\"email\":\"" + EMAIL + "\"," +
+                "\"role\":\"" + Role.USER + "\"," +
+                "\"password\":\"" + PASS + "\"}";
 
+        String login = "{" +
+                "\"email\":\"" + EMAIL + "\"," +
+                "\"password\":\"" + PASS + "\"}";
 
-        // Then ...
+        // When: primero registramos, luego hacemos login
+        ResponseEntity<String> response = client.exchange(
+                "http://localhost:8080/api/users",
+                HttpMethod.POST,
+                new HttpEntity<>(registro, headers),
+                String.class
+        );
+
+        ResponseEntity<String> responseLog = client.exchange(
+                "http://localhost:8080/api/users/me/session",
+                HttpMethod.POST,
+                new HttpEntity<>(login, headers),
+                String.class
+        );
+
+        // Then: comprobamos que el login responde 201 Created
+        Assertions.assertEquals(HttpStatus.CREATED, responseLog.getStatusCode());
 
     }
+
+
 }
